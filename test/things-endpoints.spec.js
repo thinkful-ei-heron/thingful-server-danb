@@ -25,11 +25,17 @@ describe('Things Endpoints', function() {
 
   afterEach('cleanup', () => helpers.cleanTables(db))
 
-  describe(`GET /api/things`, () => {
+  function makeAuthHeader(user) {
+    const token = Buffer.from(`${user.user_name}:${user.password}`).toString('base64')
+    return `Basic ${token}`
+  }
+
+  describe.only(`GET /api/things`, () => {
     context(`Given no things`, () => {
       it(`responds with 200 and an empty list`, () => {
         return supertest(app)
           .get('/api/things')
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .expect(200, [])
       })
     })
@@ -54,6 +60,7 @@ describe('Things Endpoints', function() {
         )
         return supertest(app)
           .get('/api/things')
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .expect(200, expectedThings)
       })
     })
@@ -76,6 +83,7 @@ describe('Things Endpoints', function() {
       it('removes XSS attack content', () => {
         return supertest(app)
           .get(`/api/things`)
+          .set('Authorization', makeAuthHeader(testUsers[0]))
           .expect(200)
           .expect(res => {
             expect(res.body[0].title).to.eql(expectedThing.title)
