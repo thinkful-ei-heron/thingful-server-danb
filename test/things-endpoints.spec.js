@@ -30,7 +30,7 @@ describe('Things Endpoints', function() {
     return `Basic ${token}`
   }
 
-  describe.only(`GET /api/things`, () => {
+  describe(`GET /api/things`, () => {
     context(`Given no things`, () => {
       it(`responds with 200 and an empty list`, () => {
         return supertest(app)
